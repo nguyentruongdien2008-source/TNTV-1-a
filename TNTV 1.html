@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Kiểm tra Tiếng Việt 30 phút</title>
+
+<style>
+body { font-family: Arial; background:#eef3ff; padding:20px; }
+.box { background:#fff; padding:15px; border-radius:10px; margin-bottom:20px; }
+button { padding:10px; background:#3498db; color:white; border:none; border-radius:6px; cursor:pointer; }
+button:hover { background:#2980b9; }
+.hidden { display:none; }
+#timer { color:red; font-weight:bold; font-size:20px; }
+.q{margin:8px 0}
+table { border-collapse: collapse; }
+th, td { padding:6px; }
+</style>
+</head>
+
+<body>
+
+<h1>📘 BÀI KIỂM TRA TIẾNG VIỆT (30 PHÚT)</h1>
+
+<!-- LOGIN -->
+<div class="box" id="loginBox">
+<select id="studentName">
+<option value="">-- Chọn học sinh --</option>
+<option>Nguyễn Yến</option>
+<option>Ninh Yến</option>
+<option>Ngọc</option>
+<option>Bảo</option>
+<option>Hân</option>
+<option>Khánh</option>
+<option>Tuấn</option>
+<option>Bảo An</option>
+</select><br><br>
+
+<button onclick="startTest()">▶️ Vào làm bài</button>
+<button onclick="showTeacher()">👩‍🏫 Giáo viên xem điểm</button>
+</div>
+
+<!-- TEST -->
+<div id="testBox" class="hidden">
+
+⏱ Thời gian còn lại: <span id="timer">30:00</span>
+
+<!-- ================= BÀI 1 ================= -->
+<div class="box">
+<h2>📝 Bài 1. Điền từ hoặc số thích hợp vào chỗ chấm</h2>
+1. Nhìn <input id="b1_1"> trông rộng.<br>
+2. Rồng <input id="b1_2"> phượng múa.<br>
+3. Chó <input id="b1_3"> mèo đậy.<br>
+4. Mưa <input id="b1_4"> gió hoà.<br>
+5. Thua keo này, bày <input id="b1_5"> khác.<br>
+6. Ăn kĩ <input id="b1_6"> lâu, cày sâu tốt lúa.<br>
+7. Đói cho sạch, <input id="b1_7"> cho thơm.<br>
+8. Non <input id="b1_8"> nước biếc.<br>
+9. Mình đồng <input id="b1_9"> sắt.<br>
+10. Tre <input id="b1_10"> dễ uốn.<br>
+</div>
+
+<!-- ================= BÀI 2 ================= -->
+<div class="box">
+<h2>🔗 Bài 2. Nối ô chữ bên trái với ô chữ bên phải để được câu đúng</h2>
+
+<table border="1" width="100%">
+<tr>
+<th>Cột 1</th>
+<th>Ghi chữ cái</th>
+<th>Cột 2</th>
+</tr>
+
+<tr><td>1. Những chú ếch</td><td><input id="b2_1" style="width:40px"></td><td>A. nhặt thóc trên sân</td></tr>
+<tr><td>2. Quả dưa hấu</td><td><input id="b2_2" style="width:40px"></td><td>B. nở rực rỡ trong đầm</td></tr>
+<tr><td>3. Đàn ong</td><td><input id="b2_3" style="width:40px"></td><td>C. ruột đỏ au</td></tr>
+<tr><td>4. Gà mái</td><td><input id="b2_4" style="width:40px"></td><td>D. nồng nàn trên đường phố</td></tr>
+<tr><td>5. Chú ngựa ô</td><td><input id="b2_5" style="width:40px"></td><td>E. toả bóng mát ở sân đình</td></tr>
+<tr><td>6. Cánh hoa giấy</td><td><input id="b2_6" style="width:40px"></td><td>F. mỏng tang như giấy bóng</td></tr>
+<tr><td>7. Cây xương rồng</td><td><input id="b2_7" style="width:40px"></td><td>G. kêu ồm ộp trong ao</td></tr>
+<tr><td>8. Hoa sen</td><td><input id="b2_8" style="width:40px"></td><td>H. phi nhanh trên thảo nguyên</td></tr>
+<tr><td>9. Cây đa</td><td><input id="b2_9" style="width:40px"></td><td>I. có những chiếc gai nhọn hoắt</td></tr>
+<tr><td>10. Mùi hoa sữa</td><td><input id="b2_10" style="width:40px"></td><td>K. hút mật trong vườn hoa</td></tr>
+</table>
+</div>
+
+<!-- ================= BÀI 3 ================= -->
+<div class="box">
+<h2>❓ Bài 3. Trắc nghiệm (30 câu)</h2>
+<div id="quiz"></div>
+</div>
+
+<button onclick="submitTest()">📩 Nộp bài</button>
+<h2 id="result"></h2>
+
+</div>
+
+<!-- ================= GIÁO VIÊN ================= -->
+<div id="teacherBox" class="hidden box">
+<h2>📊 Bảng kết quả</h2>
+<table border="1" width="100%">
+<thead>
+<tr><th>Học sinh</th><th>Lần</th><th>Điểm</th><th>Thời gian</th></tr>
+</thead>
+<tbody id="scoreTable"></tbody>
+</table>
+<br>
+<button onclick="backHome()">⬅️ Quay lại</button>
+</div>
+
+<script>
+
+let currentStudent="";
+let time=30*60;
+let timer;
+
+/* ================== 30 CÂU BÀI 3 ================== */
+const quizData=[{q:"Từ nào là danh từ?",a:["chạy","đẹp","cái bàn","nhanh"],d:2},
+{q:"Từ nào chỉ hoạt động?",a:["học","bàn","ghế","đẹp"],d:0},
+{q:"Từ nào là tính từ?",a:["xinh đẹp","ăn","viết","bút"],d:0},
+{q:"Câu nào đúng chính tả?",a:["con trâu","con châu","con trao","con chao"],d:0},
+{q:"Từ nào viết hoa đúng?",a:["hà nội","Hà Nội","hà nội","Hà nội"],d:1},
+{q:"Từ trái nghĩa với 'cao'?",a:["thấp","to","dài","xa"],d:0},
+{q:"Từ đồng nghĩa với 'siêng năng'?",a:["lười","chăm chỉ","ngủ","chơi"],d:1},
+{q:"Câu nào là câu hỏi?",a:["Bạn đi đâu.","Bạn đi đâu?","Bạn đi đâu!","Bạn đi đâu,"],d:1},
+{q:"Từ nào chỉ con vật?",a:["cây","mèo","bàn","sách"],d:1},
+{q:"Từ nào chỉ đồ vật?",a:["chim","bàn","cá","voi"],d:1},
+{q:"Từ nào có vần 'an'?",a:["lan","len","lin","lon"],d:0},
+{q:"Từ nào bắt đầu bằng 'tr'?",a:["cha","tra","ra","la"],d:1},
+{q:"Từ nào viết đúng?",a:["xung xướng","sung sướng","xung sướng","sung xướng"],d:1},
+{q:"Từ nào chỉ màu sắc?",a:["đỏ","chạy","ăn","ngủ"],d:0},
+{q:"Từ nào chỉ người?",a:["cô giáo","cây","ghế","núi"],d:0},
+{q:"Câu nào là câu kể?",a:["Bạn tên gì?","Em đi học.","Ôi đẹp quá!","A!"],d:1},
+{q:"Dấu chấm dùng để?",a:["kết thúc câu kể","hỏi","cảm xúc","ngạc nhiên"],d:0},
+{q:"Từ nào có âm 'ng'?",a:["nga","ba","ca","da"],d:0},
+{q:"Từ nào đúng?",a:["ngỉ học","nghỉ học","ngĩ học","nghỉ hok"],d:1},
+{q:"Từ trái nghĩa 'nhanh'?",a:["chậm","cao","xa","đẹp"],d:0},
+{q:"Từ nào là động từ?",a:["ăn","bàn","ghế","sách"],d:0},
+{q:"Từ nào chỉ thiên nhiên?",a:["mây","bút","vở","bàn"],d:0},
+{q:"Từ nào có dấu hỏi?",a:["hỏi","hoi","hõi","hỏi?"],d:0},
+{q:"Câu cảm thán?",a:["Ôi đẹp quá!","Bạn đi đâu.","Bạn ăn cơm chưa?","Trời mưa."],d:0},
+{q:"Từ nào viết sai?",a:["học sinh","giáo viên","hoc sinh","trường học"],d:2},
+{q:"Từ nào có tiếng 'học'?",a:["học bài","ăn cơm","đi chơi","ngủ"],d:0},
+{q:"Từ chỉ nơi chốn?",a:["trường học","ăn","đẹp","chạy"],d:0},
+{q:"Từ chỉ âm thanh?",a:["meo meo","cây","bàn","đỏ"],d:0},
+{q:"Từ nào đúng chính tả?",a:["lí do","lý do","lý zo","lí zo"],d:1},
+{q:"Từ nào chỉ thời gian?",a:["hôm nay","cái bàn","con mèo","màu đỏ"],d:0}];
+
+/* tạo câu hỏi */
+quizData.forEach((q,i)=>{
+let html=`<div class="q"><b>Câu ${i+1}:</b> ${q.q}<br>`;
+q.a.forEach((ans,j)=>{
+html+=`<label><input type="radio" name="q${i}" value="${j}"> ${ans}</label><br>`;
+});
+html+="</div>";
+quiz.innerHTML+=html;
+});
+
+/* ================== TIMER ================== */
+
+function startTest(){
+let name=document.getElementById("studentName").value;
+if(!name){alert("Chọn học sinh!");return;}
+currentStudent=name;
+loginBox.classList.add("hidden");
+testBox.classList.remove("hidden");
+
+timer=setInterval(()=>{
+let m=Math.floor(time/60),s=time%60;
+document.getElementById("timer").innerText=
+m+":"+(s<10?"0":"")+s;
+time--;
+if(time<0){submitTest();}
+},1000);
+}
+
+/* ================== NỘP BÀI ================== */
+
+function submitTest(){
+clearInterval(timer);
+let score=0;
+
+/* bài 1 */
+let b1=["xa","bay","treo","thuận","keo","no","rách","xanh","da","non"];
+for(let i=1;i<=10;i++){
+if(document.getElementById("b1_"+i).value.trim().toLowerCase()==b1[i-1])score++;
+}
+
+/* bài 2 */
+let b2=["G","C","K","A","H","F","I","B","E","D"];
+for(let i=1;i<=10;i++){
+if(document.getElementById("b2_"+i).value.trim().toUpperCase()==b2[i-1])score++;
+}
+
+/* bài 3 */
+quizData.forEach((q,i)=>{
+let choose=document.querySelector(`input[name="q${i}"]:checked`);
+if(choose && Number(choose.value)===q.d)score++;
+});
+
+/* lưu */
+let data=JSON.parse(localStorage.getItem("scores")||"[]");
+data.push({
+name:currentStudent,
+score:score+"/50",
+time:new Date().toLocaleTimeString()
+});
+localStorage.setItem("scores",JSON.stringify(data));
+
+result.innerText="🎉 "+currentStudent+" đạt "+score+"/50 điểm";
+}
+
+/* ================== GIÁO VIÊN ================== */
+
+function showTeacher(){
+loginBox.classList.add("hidden");
+teacherBox.classList.remove("hidden");
+
+let data=JSON.parse(localStorage.getItem("scores")||"[]");
+let html="";
+data.forEach((r,i)=>{
+html+=`<tr><td>${r.name}</td><td>${i+1}</td><td>${r.score}</td><td>${r.time}</td></tr>`;
+});
+scoreTable.innerHTML=html;
+}
+
+function backHome(){
+teacherBox.classList.add("hidden");
+loginBox.classList.remove("hidden");
+}
+
+</script>
+
+</body>
+</html>
